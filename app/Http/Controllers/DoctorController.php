@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DoctorRequest;
+use App\Http\Requests\UpdateDoctorRequest;
+use App\Http\Resources\DoctorResource;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 
@@ -21,8 +24,12 @@ class DoctorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(DoctorRequest $request)
     {
+        $validated = $request->validated();
+        $doctor = Doctor::create($validated);
+
+        return new DoctorResource($doctor);
     }
 
     /**
@@ -43,8 +50,14 @@ class DoctorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Doctor $doctor)
+    public function update(UpdateDoctorRequest $request)
     {
+        $validated = $request->validated();
+        $doctor = Doctor::findOrFail($validated['id']);
+        $doctor->fill($validated);
+        $doctor->save();
+
+        return new DoctorResource($doctor);
     }
 
     /**
@@ -54,7 +67,9 @@ class DoctorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Doctor $doctor)
+    public function destroy(Request $request)
     {
+        $doctor = Doctor::findOrFail($request['id']);
+        $doctor->delete();
     }
 }

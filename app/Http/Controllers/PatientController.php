@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Patient;
+use App\Http\Requests\PatientRequest;
+use App\Http\Requests\UpdatePatientRequest;
+use App\Http\Resources\PatientResource;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -14,51 +17,53 @@ class PatientController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PatientRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $patient = Patient::create($validated);
+
+        return new PatientResource($patient);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Patient  $patient
      * @return \Illuminate\Http\Response
      */
     public function show(Patient $patient)
     {
-        //
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Patient  $patient
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Patient $patient)
+    public function update(UpdatePatientRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $patient = Patient::findOrFail($validated['id']);
+        $patient->fill($validated);
+        $patient->save();
+
+        return new PatientResource($patient);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Patient  $patient
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Patient $patient)
+    public function destroy(Request $request)
     {
-        //
+        $patient = Patient::findOrFail($request['id']);
+        $patient->delete();
     }
 }

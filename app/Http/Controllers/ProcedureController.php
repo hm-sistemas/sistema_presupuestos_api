@@ -6,6 +6,7 @@ use App\Http\Requests\ProcedureRequest;
 use App\Http\Requests\UpdateProcedureRequest;
 use App\Http\Resources\ProcedureResource;
 use App\Models\Procedure;
+use Illuminate\Http\Request;
 
 class ProcedureController extends Controller
 {
@@ -63,7 +64,9 @@ class ProcedureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Procedure $procedure)
+    public function destroy(Request $request)
     {
+        $procedure = Procedure::findOrFail($request['id']);
+        $procedure->delete();
     }
 }

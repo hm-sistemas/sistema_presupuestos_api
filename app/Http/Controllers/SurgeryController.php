@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Surgery;
+use App\Models\Surgery;
 use Illuminate\Http\Request;
 
 class SurgeryController extends Controller
@@ -14,51 +14,47 @@ class SurgeryController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Surgery  $surgery
+     * @param \App\Surgery $surgery
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(Surgery $surgery)
     {
-        //
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Surgery  $surgery
+     * @param \App\Surgery $surgery
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Surgery $surgery)
     {
-        //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Surgery  $surgery
+     * @param \App\Surgery $surgery
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(Surgery $surgery)
     {
-        //
     }
 }
