@@ -43,21 +43,16 @@ class Surgery extends Model
 
     public function patient()
     {
-        return $this->belongsTo('App\Patient');
+        return $this->belongsTo('App\Models\Patient');
     }
 
     public function procedure()
     {
-        return $this->belongsTo('App\Procedure');
-    }
-
-    public function comments()
-    {
-        return $this->hasMany('App\Comment', 'foreign_key', 'local_key');
+        return $this->belongsTo('App\Models\Procedure');
     }
 
     public function doctors()
     {
-        return $this->hasManyThrough('App\Doctor', 'App\SurgicalTeam');
+        return $this->hasManyThrough('App\Models\Doctor', 'App\Models\SurgicalTeam');
     }
 }

@@ -32,4 +32,14 @@ class Patient extends Model
                 break;
         }
     }
+
+    public function appointments()
+    {
+        return $this->hasMany('App\Models\Appointment');
+    }
+
+    public function surgeries()
+    {
+        return $this->hasMany('App\Models\Surgery');
+    }
 }

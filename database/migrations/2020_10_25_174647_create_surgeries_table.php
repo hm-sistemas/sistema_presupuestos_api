@@ -16,7 +16,7 @@ class CreateSurgeriesTable extends Migration
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('procedure_id');
             $table->tinyInteger('status')->default(0);
-            $table->date('date');
+            $table->dateTime('date');
             $table->text('comments')->nullable();
             $table->foreign('patient_id')->references('id')->on('patients')->cascadeOnDelete();
             $table->foreign('procedure_id')->references('id')->on('procedures')->cascadeOnDelete();

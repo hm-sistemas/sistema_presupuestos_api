@@ -33,4 +33,14 @@ class Doctor extends Model
                 break;
         }
     }
+
+    public function refferers()
+    {
+        return $this->hasMany('App\Models\Referrer');
+    }
+
+    public function teams()
+    {
+        return $this->hasMany('App\Models\SurgicalTeam');
+    }
 }

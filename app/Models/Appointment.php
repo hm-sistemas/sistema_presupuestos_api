@@ -45,16 +45,16 @@ class Appointment extends Model
 
     public function patient()
     {
-        return $this->belongsTo('App\Patient');
+        return $this->belongsTo('App\Models\Patient');
     }
 
-    public function doctor()
+    public function refferers()
     {
-        return $this->belongsTo('App\Doctor');
+        return $this->hasMany('App\Models\Referrer');
     }
 
     public function procedure()
     {
-        return $this->belongsTo('App\Procedure');
+        return $this->belongsTo('App\Models\Procedure');
     }
 }

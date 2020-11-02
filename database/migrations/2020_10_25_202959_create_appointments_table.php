@@ -15,14 +15,14 @@ class CreateAppointmentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('procedure_id');
-            $table->unsignedBigInteger('doctor_id');
+
             $table->decimal('amount', 13, 4);
             $table->tinyInteger('status')->default(0);
-            $table->date('date');
+            $table->dateTime('date');
             $table->text('comments')->nullable();
             $table->foreign('patient_id')->references('id')->on('patients')->cascadeOnDelete();
             $table->foreign('procedure_id')->references('id')->on('procedures')->cascadeOnDelete();
-            $table->foreign('doctor_id')->references('id')->on('doctors')->cascadeOnDelete();
+
             $table->timestamps();
         });
     }
