@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProcedureRequest;
 use App\Http\Requests\UpdateProcedureRequest;
 use App\Http\Resources\ProcedureResource;
-use App\Procedure;
+use App\Models\Procedure;
 
 class ProcedureController extends Controller
 {
