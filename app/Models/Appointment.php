@@ -11,7 +11,6 @@ class Appointment extends Model
         'date',
         'comments',
         'patient_id',
-        'doctor_id',
         'procedure_id',
         'status',
     ];
@@ -51,6 +50,11 @@ class Appointment extends Model
     public function refferers()
     {
         return $this->hasMany('App\Models\Referrer');
+    }
+
+    public function doctors()
+    {
+        return $this->hasManyThrough('App\Models\Doctor', 'App\Models\Referrer');
     }
 
     public function procedure()

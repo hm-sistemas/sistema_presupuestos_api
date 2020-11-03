@@ -25,6 +25,7 @@ class DoctorResource extends JsonResource
             'gender2' => $this->gender,
             'titles' => $this->titles,
             'birth_date' => $this->birth_date->format('M-d-Y'),
+            'appointments' => new AppointmentResource($this->whenLoaded('appointments')),
         ];
     }
 }

@@ -39,6 +39,11 @@ class Doctor extends Model
         return $this->hasMany('App\Models\Referrer');
     }
 
+    public function appointments()
+    {
+        return $this->hasManyThrough('App\Models\Appointment', 'App\Models\Referrer');
+    }
+
     public function teams()
     {
         return $this->hasMany('App\Models\SurgicalTeam');
