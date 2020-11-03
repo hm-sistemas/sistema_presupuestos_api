@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AppointmentRequest;
+use App\Http\Requests\UpdateAppointmentRequest;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use App\Models\Referrer;
@@ -59,8 +60,14 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Appointment $appointment)
+    public function update(UpdateAppointmentRequest $request)
     {
+        $validated = $request->validated();
+        $appointment = Appointment::findOrFail($validated['id']);
+        $appointment->fill($validated);
+        $appointment->save();
+
+        return new Appointment($appointment);
     }
 
     /**
@@ -70,7 +77,9 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Appointment $appointment)
+    public function destroy(Request $request)
     {
+        $appointment = Appointment::findOrFail($request['id']);
+        $appointment->delete();
     }
 }
