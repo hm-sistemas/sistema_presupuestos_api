@@ -15,8 +15,17 @@ class DoctorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $paginate = $request->pagination ?? 25;
+        $doctors = Doctor::paginate($paginate);
+
+        return (DoctorResource::collection($doctors))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Doctores han sido cargados.',
+            ],
+        ]);
     }
 
     /**
@@ -29,7 +38,12 @@ class DoctorController extends Controller
         $validated = $request->validated();
         $doctor = Doctor::create($validated);
 
-        return new DoctorResource($doctor);
+        return (new DoctorResource($doctor))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Doctor han sido registrado.',
+            ],
+        ]);
     }
 
     /**
@@ -39,9 +53,16 @@ class DoctorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(Doctor $doctor)
+    public function show(Request $request)
     {
-        return new DoctorResource($doctor);
+        $doctor = Doctor::findOrFail($request->id);
+
+        return (new DoctorResource($doctor))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Doctor han sido cargado.',
+            ],
+        ]);
     }
 
     /**
@@ -58,7 +79,12 @@ class DoctorController extends Controller
         $doctor->fill($validated);
         $doctor->save();
 
-        return new DoctorResource($doctor);
+        return (new DoctorResource($doctor))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Doctor ha sido actualizado.',
+            ],
+        ]);
     }
 
     /**
@@ -72,5 +98,7 @@ class DoctorController extends Controller
     {
         $doctor = Doctor::findOrFail($request['id']);
         $doctor->delete();
+
+        return response()->json('Doctor ha sido eliminado.', 204);
     }
 }

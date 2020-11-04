@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SurgeryRequest;
+use App\Http\Requests\UpdateSurgeryRequest;
+use App\Http\Resources\SurgeryResource;
 use App\Models\Surgery;
+use App\Models\SurgicalTeam;
 use Illuminate\Http\Request;
 
 class SurgeryController extends Controller
@@ -12,8 +16,17 @@ class SurgeryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $paginate = $request->pagination ?? 25;
+        $surgeries = Surgery::paginate($paginate);
+
+        return (SurgeryResource::collection($surgeries))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Cirugias han sido cargadas.',
+            ],
+        ]);
     }
 
     /**
@@ -21,8 +34,24 @@ class SurgeryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SurgeryRequest $request)
     {
+        $validated = $request->validated();
+        $validated['status'] = 0;
+        $surgery = Surgery::create($validated);
+        if (!empty($request->doctors)) {
+            for ($i = 0; $i < count($request->doctors); ++$i) {
+                $request->doctors[$i]['surgery_id'] = $surgery->id;
+                SurgicalTeam::create($request->doctors[$i]);
+            }
+        }
+
+        return (new SurgeryResource($surgery))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Cirugia ha sido registrada.',
+            ],
+        ]);
     }
 
     /**
@@ -32,8 +61,17 @@ class SurgeryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(Surgery $surgery)
+    public function show(Request $request)
     {
+        $surgery = Surgery::findOrFail($request->id);
+        $surgery->load('patient', 'doctors', 'procedure');
+
+        return (new SurgeryResource($surgery))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Cirugia ha sido cargada.',
+            ],
+        ]);
     }
 
     /**
@@ -43,8 +81,19 @@ class SurgeryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Surgery $surgery)
+    public function update(UpdateSurgeryRequest $request)
     {
+        $validated = $request->validated();
+        $surgeries = Surgery::findOrFail($validated['id']);
+        $surgeries->fill($validated);
+        $surgeries->save();
+
+        return (new Surgery($surgeries))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Cirugia ha sido actualizada.',
+            ],
+        ]);
     }
 
     /**
@@ -54,7 +103,11 @@ class SurgeryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Surgery $surgery)
+    public function destroy(Request $request)
     {
+        $surgeries = Surgery::findOrFail($request['id']);
+        $surgeries->delete();
+
+        return response()->json('Cirugia ha sido eliminada.', 204);
     }
 }

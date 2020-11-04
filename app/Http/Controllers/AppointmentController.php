@@ -16,8 +16,17 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $paginate = $request->pagination ?? 25;
+        $appointments = Appointment::paginate($paginate);
+
+        return (AppointmentResource::collection($appointments))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Presupuestos han sido cargados.',
+            ],
+        ]);
     }
 
     /**
@@ -28,6 +37,7 @@ class AppointmentController extends Controller
     public function store(AppointmentRequest $request)
     {
         $validated = $request->validated();
+        $validated['status'] = 0;
         $appointment = Appointment::create($validated);
         if (!empty($request->referrers)) {
             for ($i = 0; $i < count($request->referrers); ++$i) {
@@ -36,7 +46,12 @@ class AppointmentController extends Controller
             }
         }
 
-        return new AppointmentResource($appointment);
+        return (new AppointmentResource($appointment))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Presupuesto ha sido registrado.',
+            ],
+        ]);
     }
 
     /**
@@ -46,11 +61,17 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(Appointment $appointment)
+    public function show(Request $request)
     {
+        $appointment = Appointment::findOrFail($request->id);
         $appointment->load('patient', 'doctors', 'procedure');
 
-        return new AppointmentResource($appointment);
+        return (new AppointmentResource($appointment))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Presupuesto ha sido cargado.',
+            ],
+        ]);
     }
 
     /**
@@ -67,7 +88,12 @@ class AppointmentController extends Controller
         $appointment->fill($validated);
         $appointment->save();
 
-        return new Appointment($appointment);
+        return (new Appointment($appointment))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Presupuesto ha sido actualizado.',
+            ],
+        ]);
     }
 
     /**
@@ -81,5 +107,7 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::findOrFail($request['id']);
         $appointment->delete();
+
+        return response()->json('Presupuesto ha sido eliminado.', 204);
     }
 }

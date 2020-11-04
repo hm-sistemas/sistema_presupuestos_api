@@ -15,8 +15,17 @@ class PatientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $paginate = $request->pagination ?? 25;
+        $patients = Patient::paginate($paginate);
+
+        return (Patient::collection($patients))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Pacientes han sido cargados.',
+            ],
+        ]);
     }
 
     /**
@@ -29,7 +38,12 @@ class PatientController extends Controller
         $validated = $request->validated();
         $patient = Patient::create($validated);
 
-        return new PatientResource($patient);
+        return (new PatientResource($patient))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Paciente ha sido registrado.',
+            ],
+        ]);
     }
 
     /**
@@ -37,8 +51,16 @@ class PatientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(Patient $patient)
+    public function show(Request $request)
     {
+        $patient = Patient::findOrFail($request->id);
+
+        return (new PatientResource($patient))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Paciente ha sido cargado.',
+            ],
+        ]);
     }
 
     /**
@@ -53,7 +75,12 @@ class PatientController extends Controller
         $patient->fill($validated);
         $patient->save();
 
-        return new PatientResource($patient);
+        return (new PatientResource($patient))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Paciente ha sido actualizado.',
+            ],
+        ]);
     }
 
     /**
@@ -65,5 +92,7 @@ class PatientController extends Controller
     {
         $patient = Patient::findOrFail($request['id']);
         $patient->delete();
+
+        return response()->json('Paciente ha sido eliminado.', 204);
     }
 }

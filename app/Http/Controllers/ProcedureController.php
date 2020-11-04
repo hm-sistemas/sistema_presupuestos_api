@@ -15,11 +15,18 @@ class ProcedureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $procedures = Procedure::paginate();
+        $paginate = $request->pagination ?? 25;
 
-        return ProcedureResource::collection($procedures);
+        $procedures = Procedure::paginate($paginate);
+
+        return (ProcedureResource::collection($procedures))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Procedimientos han sido cargados.',
+            ],
+        ]);
     }
 
     /**
@@ -32,7 +39,12 @@ class ProcedureController extends Controller
         $validated = $request->validated();
         $procedure = Procedure::create($validated);
 
-        return new ProcedureResource($procedure);
+        return (new ProcedureResource($procedure))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Procedimiento ha sido registrado.',
+            ],
+        ]);
     }
 
     /**
@@ -40,8 +52,16 @@ class ProcedureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(Procedure $procedure)
+    public function show(Request $request)
     {
+        $patient = Procedure::findOrFail($request->id);
+
+        return (new ProcedureResource($patient))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Procedimiento ha sido cargado.',
+            ],
+        ]);
     }
 
     /**
@@ -56,7 +76,12 @@ class ProcedureController extends Controller
         $procedure->name = $validated['name'];
         $procedure->save();
 
-        return new ProcedureResource($procedure);
+        return (new ProcedureResource($procedure))->additional([
+            'meta' => [
+                'success' => true,
+                'message' => 'Procedimiento ha sido actualizado.',
+            ],
+        ]);
     }
 
     /**
@@ -68,5 +93,7 @@ class ProcedureController extends Controller
     {
         $procedure = Procedure::findOrFail($request['id']);
         $procedure->delete();
+
+        return response()->json('Procedimiento ha sido eliminado.', 204);
     }
 }
