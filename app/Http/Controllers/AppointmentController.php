@@ -88,7 +88,7 @@ class AppointmentController extends Controller
         $appointment->fill($validated);
         $appointment->save();
 
-        return (new Appointment($appointment))->additional([
+        return (new AppointmentResource($appointment))->additional([
             'meta' => [
                 'success' => true,
                 'message' => 'Presupuesto ha sido actualizado.',
